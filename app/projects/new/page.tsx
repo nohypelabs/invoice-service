@@ -6,7 +6,7 @@ import { trpc } from "@/lib/trpc/client";
 
 function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`bg-white/60 backdrop-blur-xl rounded-2xl border border-white/30 shadow-sm p-6 ${className}`}>
+    <div className={`bg-white/60 backdrop-blur-xl rounded-[35px] border border-white/30 shadow-sm p-6 ${className}`}>
       {children}
     </div>
   );
@@ -16,7 +16,7 @@ function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input
       {...props}
-      className={`w-full px-3.5 py-2.5 bg-white/70 backdrop-blur-sm border border-white/30 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400/60 transition-all duration-200 ${props.className || ""}`}
+      className={`w-full px-3.5 py-2.5 bg-white/70 backdrop-blur-sm border border-white/30 rounded-[35px] text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400/60 transition-all duration-200 ${props.className || ""}`}
     />
   );
 }
@@ -25,7 +25,7 @@ function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <select
       {...props}
-      className={`w-full px-3.5 py-2.5 bg-white/70 backdrop-blur-sm border border-white/30 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400/60 transition-all duration-200 ${props.className || ""}`}
+      className={`w-full px-3.5 py-2.5 bg-white/70 backdrop-blur-sm border border-white/30 rounded-[35px] text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400/60 transition-all duration-200 ${props.className || ""}`}
     />
   );
 }
@@ -69,7 +69,7 @@ export default function RegisterProjectPage() {
       </div>
 
       {create.error && (
-        <div className="mb-6 p-4 bg-red-100/80 backdrop-blur-xl rounded-2xl border border-red-200/50 text-sm text-red-700">
+        <div className="mb-6 p-4 bg-red-100/80 backdrop-blur-xl rounded-[35px] border border-red-200/50 text-sm text-red-700">
           {create.error.message}
         </div>
       )}
@@ -143,14 +143,14 @@ export default function RegisterProjectPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="px-5 py-2.5 bg-white/60 backdrop-blur-sm border border-white/30 text-gray-700 rounded-xl text-sm font-medium hover:bg-white/80 transition-all duration-200"
+            className="px-5 py-2.5 bg-white/60 backdrop-blur-sm border border-white/30 text-gray-700 rounded-[35px] text-sm font-medium hover:bg-white/80 transition-all duration-200"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={create.isPending}
-            className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl text-sm font-medium hover:from-blue-700 hover:to-blue-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
+            className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-[35px] text-sm font-medium hover:from-blue-700 hover:to-blue-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
           >
             {create.isPending ? "Registering..." : "Register Project"}
           </button>

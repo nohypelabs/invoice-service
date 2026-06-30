@@ -44,7 +44,7 @@ export default function Home() {
         {stats.map(s => (
           <div
             key={s.label}
-            className="relative overflow-hidden bg-white/60 backdrop-blur-xl rounded-2xl border border-white/30 shadow-sm p-6"
+            className="relative overflow-hidden bg-white/60 backdrop-blur-xl rounded-[35px] border border-white/30 shadow-sm p-6"
           >
             <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${s.gradient} opacity-5 rounded-full -translate-y-1/2 translate-x-1/2`} />
             <p className="text-sm text-gray-500 mb-1.5">{s.label}</p>
@@ -54,24 +54,24 @@ export default function Home() {
         ))}
       </div>
 
-      <div className="bg-white/60 backdrop-blur-xl rounded-2xl border border-white/30 shadow-sm p-6">
+      <div className="bg-white/60 backdrop-blur-xl rounded-[35px] border border-white/30 shadow-sm p-6">
         <h3 className="font-medium text-gray-900 mb-4">Quick Actions</h3>
         <div className="flex gap-3">
           <Link
             href="/invoices/new"
-            className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl text-sm font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm"
+            className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-[35px] text-sm font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm"
           >
             New Invoice
           </Link>
           <Link
             href="/projects/new"
-            className="px-4 py-2.5 bg-white/70 backdrop-blur-sm border border-white/30 text-gray-700 rounded-xl text-sm font-medium hover:bg-white/90 transition-all duration-200"
+            className="px-4 py-2.5 bg-white/70 backdrop-blur-sm border border-white/30 text-gray-700 rounded-[35px] text-sm font-medium hover:bg-white/90 transition-all duration-200"
           >
             Register Project
           </Link>
           <Link
             href="/invoices"
-            className="px-4 py-2.5 bg-white/70 backdrop-blur-sm border border-white/30 text-gray-700 rounded-xl text-sm font-medium hover:bg-white/90 transition-all duration-200"
+            className="px-4 py-2.5 bg-white/70 backdrop-blur-sm border border-white/30 text-gray-700 rounded-[35px] text-sm font-medium hover:bg-white/90 transition-all duration-200"
           >
             View Invoices
           </Link>
