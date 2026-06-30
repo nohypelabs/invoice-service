@@ -1,41 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-
-interface Stat {
-  label: string;
-  value: string;
-  sub: string;
-}
+import { trpc } from "@/lib/trpc/client";
 
 export default function Home() {
-  const [stats, setStats] = useState<Stat[]>([]);
+  const { data: invoices } = trpc.invoice.list.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+  const { data: projects } = trpc.template.list.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
 
-  useEffect(() => {
-    Promise.all([
-      fetch("/api/invoices").then(r => r.json()).catch(() => []),
-      fetch("/api/templates").then(r => r.json()).catch(() => []),
-    ]).then(([invoices, projects]) => {
-      const total = Array.isArray(invoices) ? invoices.length : 0;
-      const paid = Array.isArray(invoices) ? invoices.filter((i: Record<string, unknown>) => i.status === "paid").length : 0;
-      const overdue = Array.isArray(invoices) ? invoices.filter((i: Record<string, unknown>) => i.status === "overdue").length : 0;
-      const projectCount = Array.isArray(projects) ? projects.length : 0;
+  const total = invoices?.length ?? 0;
+  const paid = invoices?.filter(i => i.status === "paid").length ?? 0;
+  const overdue = invoices?.filter(i => i.status === "overdue").length ?? 0;
+  const projectCount = projects?.length ?? 0;
 
-      setStats([
-        { label: "Total Invoices", value: String(total), sub: `${paid} paid · ${overdue} overdue` },
-        { label: "Projects", value: String(projectCount), sub: "registered" },
-        { label: "API Endpoints", value: "6", sub: "REST endpoints" },
-      ]);
-    });
-  }, []);
+  const stats = [
+    { label: "Total Invoices", value: String(total), sub: `${paid} paid · ${overdue} overdue` },
+    { label: "Projects", value: String(projectCount), sub: "registered" },
+  ];
 
   return (
     <div className="p-8 max-w-5xl">
       <h2 className="text-2xl font-semibold text-gray-900 mb-1">Dashboard</h2>
       <p className="text-sm text-gray-500 mb-8">Overview of your invoice service</p>
 
-      <div className="grid grid-cols-3 gap-5 mb-10">
+      <div className="grid grid-cols-2 gap-5 mb-10">
         {stats.map(s => (
           <div key={s.label} className="bg-white rounded-xl border border-gray-200 p-5">
             <p className="text-sm text-gray-500 mb-1">{s.label}</p>

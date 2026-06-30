@@ -1,13 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
-
-interface Project {
-  id: string;
-  name: string;
-  currency: string;
-}
+import { trpc } from "@/lib/trpc/client";
 
 interface ItemRow {
   description: string;
@@ -17,9 +12,17 @@ interface ItemRow {
 
 export default function NewInvoicePage() {
   const router = useRouter();
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
+  const utils = trpc.useUtils();
+  const { data: projects } = trpc.template.list.useQuery(undefined, {
+    retry: false,
+    refetchOnWindowFocus: false,
+  });
+  const create = trpc.invoice.create.useMutation({
+    onSuccess: () => {
+      utils.invoice.list.invalidate();
+      router.push("/invoices");
+    },
+  });
 
   const [projectId, setProjectId] = useState("");
   const [clientName, setClientName] = useState("");
@@ -28,13 +31,6 @@ export default function NewInvoicePage() {
   const [dueDays, setDueDays] = useState(30);
   const [notes, setNotes] = useState("");
   const [items, setItems] = useState<ItemRow[]>([{ description: "", quantity: 1, price: 0 }]);
-
-  useEffect(() => {
-    fetch("/api/templates")
-      .then(r => r.json())
-      .then(d => setProjects(Array.isArray(d) ? d : []))
-      .catch(() => {});
-  }, []);
 
   function addItem() {
     setItems(prev => [...prev, { description: "", quantity: 1, price: 0 }]);
@@ -52,37 +48,18 @@ export default function NewInvoicePage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setSubmitting(true);
-    setError("");
-
-    try {
-      const res = await fetch("/api/invoices", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          projectId,
-          clientName,
-          clientEmail: clientEmail || undefined,
-          clientAddress: clientAddress || undefined,
-          items: items.filter(i => i.description),
-          dueDays,
-          notes: notes || undefined,
-        }),
-      });
-
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error?.fieldErrors ? Object.values(err.error.fieldErrors).flat().join(", ") : "Failed to create invoice");
-      }
-
-      router.push("/invoices");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
-    } finally {
-      setSubmitting(false);
-    }
+    await create.mutateAsync({
+      projectId,
+      clientName,
+      clientEmail: clientEmail || undefined,
+      clientAddress: clientAddress || undefined,
+      items: items.filter(i => i.description),
+      dueDays,
+      notes: notes || undefined,
+    });
   }
 
+  const projectList = projects ?? [];
   const subtotal = items.reduce((s, i) => s + i.quantity * i.price, 0);
 
   return (
@@ -90,9 +67,9 @@ export default function NewInvoicePage() {
       <h2 className="text-2xl font-semibold text-gray-900 mb-1">New Invoice</h2>
       <p className="text-sm text-gray-500 mb-8">Create and generate a new invoice</p>
 
-      {error && (
+      {create.error && (
         <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
-          {error}
+          {create.error.message}
         </div>
       )}
 
@@ -108,11 +85,11 @@ export default function NewInvoicePage() {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
             >
               <option value="">Select project</option>
-              {projects.map(p => (
-                <option key={p.id} value={p.id}>{p.name}</option>
+              {projectList.map(p => (
+                <option key={p.id as string} value={p.id as string}>{p.name as string}</option>
               ))}
             </select>
-            {projects.length === 0 && (
+            {projectList.length === 0 && (
               <p className="text-xs text-gray-400 mt-1.5">
                 No projects yet.{" "}
                 <a href="/projects/new" className="text-blue-600 hover:underline">Register one</a>
@@ -250,10 +227,10 @@ export default function NewInvoicePage() {
           </button>
           <button
             type="submit"
-            disabled={submitting || projects.length === 0}
+            disabled={create.isPending || projectList.length === 0}
             className="px-5 py-2 bg-blue-600 text-white rounded-lg text-sm hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {submitting ? "Creating..." : "Create Invoice"}
+            {create.isPending ? "Creating..." : "Create Invoice"}
           </button>
         </div>
       </form>
