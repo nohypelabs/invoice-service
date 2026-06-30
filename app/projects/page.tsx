@@ -3,18 +3,23 @@
 import Link from "next/link";
 import { trpc } from "@/lib/trpc/client";
 
+const neon = {
+  raised: "6px 6px 14px rgba(174,182,204,0.5), -6px -6px 14px rgba(255,255,255,0.85)",
+  soft: "4px 4px 10px rgba(174,182,204,0.3), -4px -4px 10px rgba(255,255,255,0.7)",
+  inset: "inset 3px 3px 7px rgba(174,182,204,0.4), inset -3px -3px 7px rgba(255,255,255,0.8)",
+};
+
 export default function ProjectsPage() {
   const { data: projects, isLoading } = trpc.template.list.useQuery(undefined, {
-    retry: false,
-    refetchOnWindowFocus: false,
+    retry: false, refetchOnWindowFocus: false,
   });
 
   if (isLoading) {
     return (
-      <div className="p-8 max-w-5xl">
+      <div className="max-w-5xl">
         <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-white/60 rounded-[35px] w-48" />
-          {[1, 2].map(i => <div key={i} className="h-24 bg-white/40 rounded-[35px]" />)}
+          <div className="h-8 bg-[#dce0e8] rounded-[35px] w-48" />
+          {[1, 2].map(i => <div key={i} className="h-24 bg-[#dce0e8] rounded-[35px]" />)}
         </div>
       </div>
     );
@@ -23,29 +28,40 @@ export default function ProjectsPage() {
   const list = projects ?? [];
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="max-w-5xl">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-900 mb-1">Projects</h2>
-          <p className="text-sm text-gray-500/80">{list.length} registered</p>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-1">Projects</h2>
+          <p className="text-sm text-gray-400">{list.length} registered</p>
         </div>
         <Link
           href="/projects/new"
-          className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-[35px] text-sm font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm"
+          className="px-5 py-2.5 rounded-[20px] text-sm font-medium text-white transition-all duration-200"
+          style={{
+            background: "linear-gradient(135deg, #3b82f6, #2563eb)",
+            boxShadow: "4px 4px 10px rgba(59,130,246,0.3), -4px -4px 10px rgba(255,255,255,0.7)",
+          }}
         >
           + Register Project
         </Link>
       </div>
 
       {list.length === 0 ? (
-        <div className="bg-white/60 backdrop-blur-xl rounded-[35px] border border-white/30 shadow-sm p-16 text-center">
-          <div className="w-14 h-14 rounded-[35px] bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center mx-auto mb-4">
+        <div className="bg-[#eef0f5] rounded-[35px] p-16 text-center" style={{ boxShadow: neon.raised }}>
+          <div
+            className="w-14 h-14 rounded-[20px] bg-[#eef0f5] flex items-center justify-center mx-auto mb-4"
+            style={{ boxShadow: neon.inset }}
+          >
             <span className="text-2xl text-gray-400">◈</span>
           </div>
-          <p className="text-gray-500 text-sm mb-4">No projects registered</p>
+          <p className="text-gray-400 text-sm mb-4">No projects registered</p>
           <Link
             href="/projects/new"
-            className="inline-block px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-[35px] text-sm font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm"
+            className="inline-block px-5 py-2.5 rounded-[20px] text-sm font-medium text-white transition-all duration-200"
+            style={{
+              background: "linear-gradient(135deg, #3b82f6, #2563eb)",
+              boxShadow: "4px 4px 10px rgba(59,130,246,0.3), -4px -4px 10px rgba(255,255,255,0.7)",
+            }}
           >
             Register your first project
           </Link>
@@ -55,23 +71,27 @@ export default function ProjectsPage() {
           {list.map(p => (
             <div
               key={p.id as string}
-              className="bg-white/60 backdrop-blur-xl rounded-[35px] border border-white/30 shadow-sm p-5 hover:bg-white/70 transition-all duration-200"
+              className="bg-[#eef0f5] rounded-[35px] p-5 hover:bg-[#e2e6ef] transition-all duration-200"
+              style={{ boxShadow: neon.raised }}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-[35px] bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-bold shadow-sm shrink-0">
+                  <div
+                    className="w-10 h-10 rounded-[20px] bg-[#eef0f5] flex items-center justify-center text-sm font-bold text-blue-600 shrink-0"
+                    style={{ boxShadow: neon.soft }}
+                  >
                     {(p.name as string).charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <h3 className="font-medium text-gray-900">{p.name as string}</h3>
-                    <p className="text-sm text-gray-500 mt-0.5">{p.from_name as string} · {p.from_email as string}</p>
+                    <h3 className="font-medium text-gray-800">{p.name as string}</h3>
+                    <p className="text-sm text-gray-400 mt-0.5">{p.from_name as string} · {p.from_email as string}</p>
                   </div>
                 </div>
                 <div className="flex gap-2 text-xs">
-                  <span className="px-2.5 py-1 bg-white/60 border border-white/20 rounded-[35px] text-gray-600 font-medium">
+                  <span className="px-2.5 py-1 rounded-[35px] text-gray-600 font-medium bg-[#eef0f5]" style={{ boxShadow: neon.inset }}>
                     {p.currency as string}
                   </span>
-                  <span className="px-2.5 py-1 bg-white/60 border border-white/20 rounded-[35px] text-gray-600 font-medium">
+                  <span className="px-2.5 py-1 rounded-[35px] text-gray-600 font-medium bg-[#eef0f5]" style={{ boxShadow: neon.inset }}>
                     {(p.tax_rate as number)}% tax
                   </span>
                 </div>

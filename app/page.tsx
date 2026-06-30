@@ -3,14 +3,17 @@
 import Link from "next/link";
 import { trpc } from "@/lib/trpc/client";
 
+const neon = {
+  raised: "6px 6px 14px rgba(174,182,204,0.5), -6px -6px 14px rgba(255,255,255,0.85)",
+  soft: "4px 4px 10px rgba(174,182,204,0.3), -4px -4px 10px rgba(255,255,255,0.7)",
+};
+
 export default function Home() {
   const { data: invoices } = trpc.invoice.list.useQuery(undefined, {
-    retry: false,
-    refetchOnWindowFocus: false,
+    retry: false, refetchOnWindowFocus: false,
   });
   const { data: projects } = trpc.template.list.useQuery(undefined, {
-    retry: false,
-    refetchOnWindowFocus: false,
+    retry: false, refetchOnWindowFocus: false,
   });
 
   const total = invoices?.length ?? 0;
@@ -19,59 +22,58 @@ export default function Home() {
   const projectCount = projects?.length ?? 0;
 
   const stats = [
-    {
-      label: "Total Invoices",
-      value: String(total),
-      sub: `${paid} paid · ${overdue} overdue`,
-      gradient: "from-blue-500 to-cyan-500",
-    },
-    {
-      label: "Projects",
-      value: String(projectCount),
-      sub: "registered",
-      gradient: "from-purple-500 to-pink-500",
-    },
+    { label: "Total Invoices", value: String(total), sub: `${paid} paid · ${overdue} overdue` },
+    { label: "Projects", value: String(projectCount), sub: "registered" },
   ];
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="max-w-5xl">
       <div className="mb-8">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-1">Dashboard</h2>
-        <p className="text-sm text-gray-500/80">Overview of your invoice service</p>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-1">Dashboard</h2>
+        <p className="text-sm text-gray-400">Overview of your invoice service</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-5 mb-10">
+      <div className="grid grid-cols-2 gap-6 mb-10">
         {stats.map(s => (
           <div
             key={s.label}
-            className="relative overflow-hidden bg-white/60 backdrop-blur-xl rounded-[35px] border border-white/30 shadow-sm p-6"
+            className="bg-[#eef0f5] rounded-[35px] p-6"
+            style={{ boxShadow: neon.raised }}
           >
-            <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-br ${s.gradient} opacity-5 rounded-full -translate-y-1/2 translate-x-1/2`} />
-            <p className="text-sm text-gray-500 mb-1.5">{s.label}</p>
-            <p className="text-3xl font-semibold text-gray-900">{s.value}</p>
+            <p className="text-sm text-gray-400 mb-1.5">{s.label}</p>
+            <p className="text-3xl font-semibold text-gray-800">{s.value}</p>
             <p className="text-xs text-gray-400 mt-1.5">{s.sub}</p>
           </div>
         ))}
       </div>
 
-      <div className="bg-white/60 backdrop-blur-xl rounded-[35px] border border-white/30 shadow-sm p-6">
-        <h3 className="font-medium text-gray-900 mb-4">Quick Actions</h3>
+      <div
+        className="bg-[#eef0f5] rounded-[35px] p-6"
+        style={{ boxShadow: neon.soft }}
+      >
+        <h3 className="font-medium text-gray-800 mb-4">Quick Actions</h3>
         <div className="flex gap-3">
           <Link
             href="/invoices/new"
-            className="px-4 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-[35px] text-sm font-medium hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-sm"
+            className="px-5 py-2.5 rounded-[20px] text-sm font-medium text-white transition-all duration-200"
+            style={{
+              background: "linear-gradient(135deg, #3b82f6, #2563eb)",
+              boxShadow: "4px 4px 10px rgba(59,130,246,0.3), -4px -4px 10px rgba(255,255,255,0.7)",
+            }}
           >
             New Invoice
           </Link>
           <Link
             href="/projects/new"
-            className="px-4 py-2.5 bg-white/70 backdrop-blur-sm border border-white/30 text-gray-700 rounded-[35px] text-sm font-medium hover:bg-white/90 transition-all duration-200"
+            className="px-5 py-2.5 rounded-[20px] text-sm font-medium text-gray-700 bg-[#eef0f5] transition-all duration-200"
+            style={{ boxShadow: neon.soft }}
           >
             Register Project
           </Link>
           <Link
             href="/invoices"
-            className="px-4 py-2.5 bg-white/70 backdrop-blur-sm border border-white/30 text-gray-700 rounded-[35px] text-sm font-medium hover:bg-white/90 transition-all duration-200"
+            className="px-5 py-2.5 rounded-[20px] text-sm font-medium text-gray-700 bg-[#eef0f5] transition-all duration-200"
+            style={{ boxShadow: neon.soft }}
           >
             View Invoices
           </Link>

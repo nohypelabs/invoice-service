@@ -4,49 +4,21 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc/client";
 
-function GlassCard({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return (
-    <div className={`bg-white/60 backdrop-blur-xl rounded-[35px] border border-white/30 shadow-sm p-6 ${className}`}>
-      {children}
-    </div>
-  );
-}
-
-function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
-    <input
-      {...props}
-      className={`w-full px-3.5 py-2.5 bg-white/70 backdrop-blur-sm border border-white/30 rounded-[35px] text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400/60 transition-all duration-200 ${props.className || ""}`}
-    />
-  );
-}
-
-function Select(props: React.SelectHTMLAttributes<HTMLSelectElement>) {
-  return (
-    <select
-      {...props}
-      className={`w-full px-3.5 py-2.5 bg-white/70 backdrop-blur-sm border border-white/30 rounded-[35px] text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400/60 transition-all duration-200 ${props.className || ""}`}
-    />
-  );
-}
+const neon = {
+  raised: "6px 6px 14px rgba(174,182,204,0.5), -6px -6px 14px rgba(255,255,255,0.85)",
+  soft: "4px 4px 10px rgba(174,182,204,0.3), -4px -4px 10px rgba(255,255,255,0.7)",
+  inset: "inset 3px 3px 7px rgba(174,182,204,0.4), inset -3px -3px 7px rgba(255,255,255,0.8)",
+};
 
 export default function RegisterProjectPage() {
   const router = useRouter();
   const utils = trpc.useUtils();
   const create = trpc.template.create.useMutation({
-    onSuccess: () => {
-      utils.template.list.invalidate();
-      router.push("/projects");
-    },
+    onSuccess: () => { utils.template.list.invalidate(); router.push("/projects"); },
   });
 
   const [form, setForm] = useState({
-    name: "",
-    fromName: "",
-    fromAddress: "",
-    fromEmail: "",
-    taxRate: 0,
-    currency: "USD",
+    name: "", fromName: "", fromAddress: "", fromEmail: "", taxRate: 0, currency: "USD",
   });
 
   function update(field: string, value: string) {
@@ -62,95 +34,110 @@ export default function RegisterProjectPage() {
   }
 
   return (
-    <div className="p-8 max-w-2xl">
+    <div className="max-w-2xl">
       <div className="mb-8">
-        <h2 className="text-2xl font-semibold text-gray-900 mb-1">Register Project</h2>
-        <p className="text-sm text-gray-500/80">Configure a project for invoice generation</p>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-1">Register Project</h2>
+        <p className="text-sm text-gray-400">Configure a project for invoice generation</p>
       </div>
 
       {create.error && (
-        <div className="mb-6 p-4 bg-red-100/80 backdrop-blur-xl rounded-[35px] border border-red-200/50 text-sm text-red-700">
+        <div
+          className="mb-6 p-4 rounded-[35px] text-sm text-red-700"
+          style={{ background: "#eef0f5", boxShadow: neon.inset }}
+        >
           {create.error.message}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <GlassCard>
-          <h3 className="font-medium text-gray-900 text-sm mb-4">Project Info</h3>
-          <div>
-            <label className="block text-xs text-gray-500 mb-1.5">Project Name</label>
-            <Input
-              value={form.name}
-              onChange={e => update("name", e.target.value)}
-              required
-              placeholder="e.g. elon-sniper-bot"
-            />
-            {form.name && (
-              <p className="text-xs text-gray-400 mt-2">
-                ID: <span className="font-mono text-gray-500 bg-white/40 px-2 py-0.5 rounded-md">
-                  {form.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}
-                </span>
-              </p>
-            )}
-          </div>
-        </GlassCard>
+        <div className="bg-[#eef0f5] rounded-[35px] p-6" style={{ boxShadow: neon.raised }}>
+          <h3 className="font-medium text-gray-800 text-sm mb-4">Project Info</h3>
+          <input
+            value={form.name} onChange={e => update("name", e.target.value)} required
+            placeholder="e.g. elon-sniper-bot"
+            className="w-full px-3.5 py-2.5 rounded-[35px] text-sm text-gray-700 bg-[#eef0f5] placeholder-gray-400 focus:outline-none transition-all duration-200"
+            style={{ boxShadow: neon.inset }}
+          />
+          {form.name && (
+            <p className="text-xs text-gray-400 mt-2">
+              ID: <span className="font-mono text-gray-500 bg-[#e2e6ef] px-2 py-0.5 rounded-[35px]">
+                {form.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")}
+              </span>
+            </p>
+          )}
+        </div>
 
-        <GlassCard>
-          <h3 className="font-medium text-gray-900 text-sm mb-4">Sender Info</h3>
+        <div className="bg-[#eef0f5] rounded-[35px] p-6" style={{ boxShadow: neon.raised }}>
+          <h3 className="font-medium text-gray-800 text-sm mb-4">Sender Info</h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
-              <label className="block text-xs text-gray-500 mb-1.5">Name</label>
-              <Input value={form.fromName} onChange={e => update("fromName", e.target.value)} required placeholder="Your name / company" />
+              <label className="block text-xs text-gray-400 mb-1.5">Name</label>
+              <input
+                value={form.fromName} onChange={e => update("fromName", e.target.value)} required
+                placeholder="Your name / company"
+                className="w-full px-3.5 py-2.5 rounded-[35px] text-sm text-gray-700 bg-[#eef0f5] placeholder-gray-400 focus:outline-none"
+                style={{ boxShadow: neon.inset }}
+              />
             </div>
             <div className="col-span-2">
-              <label className="block text-xs text-gray-500 mb-1.5">Address</label>
-              <Input value={form.fromAddress} onChange={e => update("fromAddress", e.target.value)} required placeholder="Your address" />
+              <label className="block text-xs text-gray-400 mb-1.5">Address</label>
+              <input
+                value={form.fromAddress} onChange={e => update("fromAddress", e.target.value)} required
+                placeholder="Your address"
+                className="w-full px-3.5 py-2.5 rounded-[35px] text-sm text-gray-700 bg-[#eef0f5] placeholder-gray-400 focus:outline-none"
+                style={{ boxShadow: neon.inset }}
+              />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1.5">Email</label>
-              <Input type="email" value={form.fromEmail} onChange={e => update("fromEmail", e.target.value)} required placeholder="you@example.com" />
+              <label className="block text-xs text-gray-400 mb-1.5">Email</label>
+              <input
+                type="email" value={form.fromEmail} onChange={e => update("fromEmail", e.target.value)} required
+                placeholder="you@example.com"
+                className="w-full px-3.5 py-2.5 rounded-[35px] text-sm text-gray-700 bg-[#eef0f5] placeholder-gray-400 focus:outline-none"
+                style={{ boxShadow: neon.inset }}
+              />
             </div>
             <div>
-              <label className="block text-xs text-gray-500 mb-1.5">Currency</label>
-              <Select value={form.currency} onChange={e => update("currency", e.target.value)}>
+              <label className="block text-xs text-gray-400 mb-1.5">Currency</label>
+              <select
+                value={form.currency} onChange={e => update("currency", e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-[35px] text-sm text-gray-700 bg-[#eef0f5] focus:outline-none appearance-none"
+                style={{ boxShadow: neon.inset }}
+              >
                 <option value="USD">USD</option>
                 <option value="EUR">EUR</option>
                 <option value="SOL">SOL</option>
                 <option value="USDC">USDC</option>
                 <option value="IDR">IDR</option>
-              </Select>
+              </select>
             </div>
           </div>
-        </GlassCard>
+        </div>
 
-        <GlassCard>
-          <h3 className="font-medium text-gray-900 text-sm mb-4">Tax</h3>
-          <div>
-            <label className="block text-xs text-gray-500 mb-1.5">Tax Rate (%)</label>
-            <Input
-              type="number"
-              value={form.taxRate}
-              onChange={e => update("taxRate", e.target.value)}
-              min={0}
-              max={100}
-              step="0.1"
-              className="w-32"
-            />
-          </div>
-        </GlassCard>
+        <div className="bg-[#eef0f5] rounded-[35px] p-6" style={{ boxShadow: neon.raised }}>
+          <h3 className="font-medium text-gray-800 text-sm mb-4">Tax</h3>
+          <input
+            type="number" value={form.taxRate} onChange={e => update("taxRate", e.target.value)}
+            min={0} max={100} step="0.1" className="w-32 px-3.5 py-2.5 rounded-[35px] text-sm text-gray-700 bg-[#eef0f5] focus:outline-none"
+            style={{ boxShadow: neon.inset }}
+          />
+        </div>
 
         <div className="flex justify-end gap-3">
           <button
-            type="button"
-            onClick={() => router.back()}
-            className="px-5 py-2.5 bg-white/60 backdrop-blur-sm border border-white/30 text-gray-700 rounded-[35px] text-sm font-medium hover:bg-white/80 transition-all duration-200"
+            type="button" onClick={() => router.back()}
+            className="px-5 py-2.5 rounded-[20px] text-sm font-medium text-gray-700 bg-[#eef0f5] transition-all duration-200"
+            style={{ boxShadow: neon.soft }}
           >
             Cancel
           </button>
           <button
-            type="submit"
-            disabled={create.isPending}
-            className="px-5 py-2.5 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-[35px] text-sm font-medium hover:from-blue-700 hover:to-blue-800 disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200 shadow-sm"
+            type="submit" disabled={create.isPending}
+            className="px-5 py-2.5 rounded-[20px] text-sm font-medium text-white transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed"
+            style={{
+              background: "linear-gradient(135deg, #3b82f6, #2563eb)",
+              boxShadow: "4px 4px 10px rgba(59,130,246,0.3), -4px -4px 10px rgba(255,255,255,0.7)",
+            }}
           >
             {create.isPending ? "Registering..." : "Register Project"}
           </button>

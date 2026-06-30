@@ -1,10 +1,16 @@
 @import "tailwindcss";
 
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #d1d5db transparent;
+:root {
+  --neu-bg: #eef0f5;
+  --neu-shadow-light: rgba(255, 255, 255, 0.85);
+  --neu-shadow-dark: rgba(174, 182, 204, 0.5);
 }
 
 body {
-  background: linear-gradient(135deg, #f0f4ff 0%, #e8ecf8 50%, #f5f0ff 100%);
+  background: var(--neu-bg);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #c4c9d6 transparent;
 }
